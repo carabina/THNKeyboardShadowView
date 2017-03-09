@@ -32,8 +32,10 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(show) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showWindow) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideWindow) name:UIKeyboardWillHideNotification object:nil];
         self.windowLevel = UIWindowLevelStatusBar;
+        self.backgroundColor = [UIColor clearColor];
     }
     
     return self;
@@ -43,16 +45,15 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)show {
+- (void)showWindow {
     if (!self.enabled) return;
     self.firstResponderView = [self getFirstResponderView];
     self.hidden = NO;
 }
 
-- (void)dismiss {
+- (void)hideWindow {
     self.hidden = YES;
     self.firstResponderView = nil;
-    [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
 #pragma mark - Touch
@@ -69,9 +70,9 @@
     return self;
 }
 
-// 点击生效时，键盘收起
+// 点击生效时，UITxtField/UITextView结束编辑
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [self dismiss];
+    [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
 #pragma mark - Utility
