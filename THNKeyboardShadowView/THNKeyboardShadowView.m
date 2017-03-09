@@ -79,10 +79,13 @@
 - (UIView *)getFirstResponderView {
     NSArray *windows = [[UIApplication sharedApplication] windows];
     for (UIWindow *item in windows) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wundeclared-selector"
         UIView *responderView = [item performSelector:@selector(firstResponder)];
         if (responderView && [responderView isKindOfClass:[UIView class]]) {
             return responderView;
         }
+        #pragma clang diagnostic pop
     }
     
     return nil;
